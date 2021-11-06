@@ -1,17 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+
+import { createStore, applyMiddleware } from 'redux'; // set up redux
+import { Provider } from 'react-redux';
+
+import thunk from 'redux-thunk'; // redux middleware
+
+import App from './views/App'; // main Component
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import rootReducer from './reducers/rootReducer'; // import main reducer
+
+const store = createStore(
+	rootReducer,
+	applyMiddleware(thunk)
+)
+
+if(localStorage.token) {
+	const token = JSON.parse(localStorage.token);
+	store.dispatch({type: 'SET_LOGIN', value: token});
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+	<Provider store={store}>
+		<App />
+	</Provider>,
+	document.getElementById('root'));
